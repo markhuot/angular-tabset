@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html data-ng-app="app">
+<head>
+  <title>Angular.js</title>
+</head>
+<body>
+  <div>
+    <div class="tabset" data-ng-controller="TabController">
+      {{activeTab}}
+
+      <div data-ng-tab-buttons></div>
+
+      <div class="tab" data-ng-tab data-tab-title="Title One">
+        <h2>Title One</h2>
+        one
+      </div>
+      <div class="tab" data-ng-tab data-tab-title="Title Two">
+        <h2>Title Two</h2>
+        two
+      </div>
+      <div class="tab" data-ng-tab data-tab-title="Title Three">
+        <h2>Title Three</h2>
+        three
+      </div>
+
+    </div>
+  </div>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.7/angular.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.7/angular-route.js"></script>
+  <script>
+    angular.module('app', ['ngRoute'])
+
+    .controller('TabController', ['$scope', function($scope) {
+      $scope.activeTab = 0;
+      $scope.tabs = [];
+      $scope.tabButtons = [];
+
+      $scope.addTab = function(title, element) {
+        if ($scope.tabs.length != $scope.activeTab) {
+          element.css('display', 'none');
+        }
+        $scope.tabs.push({"title":title, "element":element});
+      }
+
+      $scope.selectTab = function(selectedIndex) {
+        angular.forEach($scope.tabs, function(tab, index) {
+          $scope.tabs[$scope.activeTab].element.css('display', 'none');
+          $scope.tabs[selectedIndex].element.css('display', 'block');
+          $scope.activeTab = selectedIndex;
+        });
+      }
+    }])
+
+    .directive('ngTabButtons', function() {
+      return {
+        template: '<li data-ng-repeat="tab in tabs"><button data-ng-click="selectTab($index)">{{ tab.title }}</button></li>'
+      }
+    })
+
+    .directive('ngTab', function() {
+      return {
+        link: function(scope, element, attrs) {
+          scope.addTab(element.attr('data-tab-title') || 'Tab', element);
+        }
+      };
+    });
+  </script>
+</body>
+</html>
